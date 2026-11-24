@@ -1,7 +1,7 @@
 {
   "domain": "tr198a_fan",
   "name": "TR198A Ceiling-Fan",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "documentation": "https://github.com/janabimustafa/ha-tr198a-fan",
   "requirements": [],
   "dependencies": [],
