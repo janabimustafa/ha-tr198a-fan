@@ -1,4 +1,4 @@
-"""Dynamic creation of one ButtonEntity per function *and* matching services."""
+"""Dynamic creation of one ButtonEntity per function."""
 from __future__ import annotations
 import logging
 from homeassistant.components.button import ButtonEntity
@@ -66,7 +66,7 @@ async def _execute(fan: "Tr198aFan", svc: str):
         if entry_id and hass:
             entry = next((e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id == entry_id), None)
             if entry:
-                step_size = entry.options.get(DIM_STEP_SIZE, entry.data.get(DIM_STEP_SIZE, 2))
+                step_size = entry.data.get(DIM_STEP_SIZE, 2)
         steps = step_size
         radio = 0xC9 + (steps - 1) * 4
         trailer = 394
@@ -113,16 +113,4 @@ async def async_setup_entry(
         for svc in BUTTONS
     ]
     async_add_entities(entities)
-
-    # Register helper-services exactly once
-    if store.get("services_registered"):
-        return
-    async def _service_handler(call):
-        svc   = call.service
-        for eid in hass.helpers.entity_component.async_extract_entity_ids(call):
-            fan_ent = hass.data[DOMAIN][entry.entry_id].get("fan_entity")
-            if fan_ent and fan_ent.entity_id == eid:
-                await _execute(fan_ent, svc)
-    for svc in BUTTONS:
-        hass.services.async_register(DOMAIN, svc, _service_handler)
-    store["services_registered"] = True
+    # (the matching tr198a_fan.* services are registered by the fan platform)

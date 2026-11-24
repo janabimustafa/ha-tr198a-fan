@@ -58,17 +58,35 @@ For updates, simply update via HACS when a new version is released.
 ### Home Assistant
 
 - **Fan Entity**: Control speed (0–9), direction, and breeze presets.
-- **Light Toggle**: Use the button entity or service to toggle the fan's light.
+- **Light**: A light entity turns the fan's light on and off.
 - **Pairing**: Use the "Pair Remote" button or service to pair a new handset ID with your fan.
 - **Dimming**: Use "Dim Up" and "Dim Down" buttons/services for light dimming steps.
 
+#### Using a smart power switch
+
+The light can only be *toggled* over RF, so Home Assistant has to keep track of it. If the fan is powered through a smart switch, the integration follows that switch too:
+
+- While the switch is off, the fan and light show as off. The receiver remembers what it was doing and picks it up again when power returns, and Home Assistant shows the same.
+- Turning the fan or the light **on** while the switch is off turns the switch on, waits for the receiver to start up, and then switches on only what you asked for. (If the receiver restores the other one on power-up, you may see it come on for a few seconds before it is switched back off.)
+- Turning the fan or the light **off** while the switch is off does nothing – it will not power the fan back up.
+- **Power-on delay** (in the integration's options, default 2 s) is how long to wait after the switch turns on before sending a command. Increase it if commands sent right after power-up are missed.
+- To stop using a power switch, clear the field in the integration's options.
+
+If the light ever gets out of step anyway (for example after using the original remote), press **Sync Light** to flip the lamp without changing what Home Assistant shows.
+
 #### Services
 
-See `services.yaml` for full details. Example services:
+These do the same as the buttons and take the fan entity as their target:
 
 - `tr198a_fan.pair`: Pair the remote to the fan.
-- `tr198a_fan.light_toggle`: Toggle the fan's light.
 - `tr198a_fan.dim_up` / `tr198a_fan.dim_down`: Adjust light brightness.
+- `tr198a_fan.sync_light`: Flip the lamp without changing Home Assistant's state.
+
+```yaml
+action: tr198a_fan.sync_light
+target:
+  entity_id: fan.living_room_fan
+```
 
 ### Python CLI/Library
 

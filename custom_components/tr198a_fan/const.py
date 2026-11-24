@@ -16,6 +16,11 @@ SERVICE_SYNC_LIGHT           = "sync_light"
 
 DIM_STEP_SIZE = "dim_step_size"
 
+# Seconds to wait after the power switch turns on before sending RF: the
+# receiver ignores commands while it boots.
+CONF_POWER_ON_DELAY    = "power_on_delay"
+DEFAULT_POWER_ON_DELAY = 2.0
+
 # default values
 DEF_STATE = {
     ATTR_SPEED: 0,

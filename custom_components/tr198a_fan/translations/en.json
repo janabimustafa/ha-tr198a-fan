@@ -9,7 +9,8 @@
           "power_switch_entity_id": "Dependent power switch",
           "name": "Fan name",
           "auto_pair": "Automatically pair after adding",
-          "dim_step_size": "Number of steps to dim the light when using the Dim Up/Down buttons. Default is 2."
+          "dim_step_size": "Number of steps to dim the light when using the Dim Up/Down buttons. Default is 2.",
+          "power_on_delay": "Seconds to wait after the power switch turns on before sending a command, so the fan's receiver has time to start up. Default is 2."
         }
       }
     }
@@ -19,12 +20,13 @@
     "step": {
       "init": {
         "title": "TR198A options",
-        "description": "Update the Broadlink remote, dependent power-switch or friendly name.",
+        "description": "Update the Broadlink remote, dependent power-switch or friendly name. Clear the power-switch field to stop using one.",
         "data": {
           "remote_entity_id": "Broadlink remote",
           "power_switch_entity_id": "Dependent power switch",
           "name": "Fan name",
-          "dim_step_size": "Number of steps to dim the light when using the Dim Up/Down buttons. Default is 2."
+          "dim_step_size": "Number of steps to dim the light when using the Dim Up/Down buttons. Default is 2.",
+          "power_on_delay": "Seconds to wait after the power switch turns on before sending a command, so the fan's receiver has time to start up. Default is 2."
         }
       }
     }

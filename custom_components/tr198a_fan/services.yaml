@@ -1,30 +1,31 @@
 pair:
+  name: Pair remote
   description: Send the 10× pairing packet so the fan learns this handset ID.
-  fields:
-    entity_id:
-      description: Fan entity to pair
-      example: fan.living_room_fan
-
-light_toggle:
-  description: Toggle light on/off (stateless on the fan itself).
-  fields:
-    entity_id:
-      description: Fan entity
+  target:
+    entity:
+      integration: tr198a_fan
+      domain: fan
 
 dim_up:
-  description: One dim-up step (0-10 repeat automatically handled).
-  fields:
-    entity_id:
-      description: Fan entity
+  name: Dim up
+  description: Brighten the light by the configured number of dim steps.
+  target:
+    entity:
+      integration: tr198a_fan
+      domain: fan
 
 dim_down:
-  description: One dim-down step.
-  fields:
-    entity_id:
-      description: Fan entity
+  name: Dim down
+  description: Dim the light by the configured number of dim steps.
+  target:
+    entity:
+      integration: tr198a_fan
+      domain: fan
 
 sync_light:
+  name: Sync light
   description: Flick the fan's light relay without changing Home Assistant's state (for resync).
-  fields:
-    entity_id:
-      description: Fan entity
+  target:
+    entity:
+      integration: tr198a_fan
+      domain: fan

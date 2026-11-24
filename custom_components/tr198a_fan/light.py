@@ -1,10 +1,9 @@
 from __future__ import annotations
 from homeassistant.components.light import LightEntity, ColorMode
-from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.const import CONF_NAME
-from .const import DOMAIN, ATTR_LIGHT
+from .const import DOMAIN
 
 class Tr198aLight(LightEntity):
+    """The fan's light.  All state lives in the fan entity, which owns the RF link."""
     _attr_should_poll = False
     _attr_translation_key = "tr198a_light"
     _attr_supported_color_modes = {ColorMode.ONOFF}
@@ -17,44 +16,20 @@ class Tr198aLight(LightEntity):
         self._attr_unique_id = f"{fan_entity._attr_unique_id}_light"
         self._attr_device_info = fan_entity._attr_device_info
 
+    async def async_added_to_hass(self):
+        await super().async_added_to_hass()
+        # follow every change the fan tracks (commands, power switch, …)
+        self.async_on_remove(self.fan.async_add_listener(self.async_write_ha_state))
+
     @property
     def is_on(self):
-        return self.fan._state[ATTR_LIGHT]
+        return self.fan.light_is_on
 
     async def async_turn_on(self, **kwargs):
-        # Ensure power switch is on before toggling the light
-        was_off = False
-        if self.fan._power_switch_id:
-            state = self.hass.states.get(self.fan._power_switch_id)
-            if not state or state.state != "on":
-                was_off = True
-                await self.hass.services.async_call(
-                    "switch", "turn_on", {"entity_id": self.fan._power_switch_id}, blocking=True
-                )
-
-        # If the power switch was off and the light was previously on, the
-        # physical light will turn on automatically when power is restored.
-        if was_off and self.fan._prev_light:
-            self.fan._state[ATTR_LIGHT] = True
-            self.fan._prev_light = True
-            self.fan.async_write_ha_state()
-            self.async_write_ha_state()
-            return
-
-        if not self.fan._state[ATTR_LIGHT]:
-            await self.fan._send_state(light_toggle=True)
-            self.fan._state[ATTR_LIGHT] = True
-            self.fan._prev_light = True
-            self.fan.async_write_ha_state()
-            self.async_write_ha_state()
+        await self.fan.async_set_light(True)
 
     async def async_turn_off(self, **kwargs):
-        if self.fan._state[ATTR_LIGHT]:
-            await self.fan._send_state(light_toggle=True)
-            self.fan._state[ATTR_LIGHT] = False
-            self.fan._prev_light = False
-            self.fan.async_write_ha_state()
-            self.async_write_ha_state()
+        await self.fan.async_set_light(False)
 
     @property
     def extra_state_attributes(self):
